@@ -1,0 +1,513 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		EEDCDB771B9F92FA00AE693C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDB761B9F92FA00AE693C /* main.m */; };
+		EEDCDB7A1B9F92FA00AE693C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDB791B9F92FA00AE693C /* AppDelegate.m */; };
+		EEDCDB801B9F92FA00AE693C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEDCDB7E1B9F92FA00AE693C /* Main.storyboard */; };
+		EEDCDB821B9F92FA00AE693C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EEDCDB811B9F92FA00AE693C /* Images.xcassets */; };
+		EEDCDB851B9F92FA00AE693C /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = EEDCDB831B9F92FA00AE693C /* LaunchScreen.xib */; };
+		EEDCDB911B9F92FA00AE693C /* ios_beacon_toolsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDB901B9F92FA00AE693C /* ios_beacon_toolsTests.m */; };
+		EEDCDBAF1B9F935500AE693C /* RNLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDB9B1B9F935500AE693C /* RNLAppDelegate.m */; };
+		EEDCDBB01B9F935500AE693C /* RNLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDB9B1B9F935500AE693C /* RNLAppDelegate.m */; };
+		EEDCDBB31B9F935500AE693C /* RNLBeaconTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDB9F1B9F935500AE693C /* RNLBeaconTracker.m */; };
+		EEDCDBB41B9F935500AE693C /* RNLBeaconTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDB9F1B9F935500AE693C /* RNLBeaconTracker.m */; };
+		EEDCDBB51B9F935500AE693C /* RNLLocationTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDBA11B9F935500AE693C /* RNLLocationTracker.m */; };
+		EEDCDBB61B9F935500AE693C /* RNLLocationTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDBA11B9F935500AE693C /* RNLLocationTracker.m */; };
+		EEDCDBB71B9F935500AE693C /* RNLSignalMeasurement.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDBA31B9F935500AE693C /* RNLSignalMeasurement.m */; };
+		EEDCDBB81B9F935500AE693C /* RNLSignalMeasurement.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDBA31B9F935500AE693C /* RNLSignalMeasurement.m */; };
+		EEDCDBB91B9F935500AE693C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEDCDBA41B9F935500AE693C /* Main.storyboard */; };
+		EEDCDBBA1B9F935500AE693C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEDCDBA41B9F935500AE693C /* Main.storyboard */; };
+		EEDCDBBB1B9F935500AE693C /* RNLBeacon+Distance.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDBA61B9F935500AE693C /* RNLBeacon+Distance.m */; };
+		EEDCDBBC1B9F935500AE693C /* RNLBeacon+Distance.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDBA61B9F935500AE693C /* RNLBeacon+Distance.m */; };
+		EEDCDBBD1B9F935500AE693C /* RNLBeaconScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDBA81B9F935500AE693C /* RNLBeaconScanner.m */; };
+		EEDCDBBE1B9F935500AE693C /* RNLBeaconScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDBA81B9F935500AE693C /* RNLBeaconScanner.m */; };
+		EEDCDBBF1B9F935500AE693C /* RNLBeaconParser.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDBAA1B9F935500AE693C /* RNLBeaconParser.m */; };
+		EEDCDBC01B9F935500AE693C /* RNLBeaconParser.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDBAA1B9F935500AE693C /* RNLBeaconParser.m */; };
+		EEDCDBC11B9F935500AE693C /* RNLBeacon.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDBAC1B9F935500AE693C /* RNLBeacon.m */; };
+		EEDCDBC21B9F935500AE693C /* RNLBeacon.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDBAC1B9F935500AE693C /* RNLBeacon.m */; };
+		EEDCDBC31B9F935500AE693C /* RNLBeaconTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDBAE1B9F935500AE693C /* RNLBeaconTableViewController.m */; };
+		EEDCDBC41B9F935500AE693C /* RNLBeaconTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDBAE1B9F935500AE693C /* RNLBeaconTableViewController.m */; };
+		EEDCDBC61B9F93BD00AE693C /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = EEDCDBC51B9F93BD00AE693C /* LICENSE */; };
+		EEDCDBC71B9F93BD00AE693C /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = EEDCDBC51B9F93BD00AE693C /* LICENSE */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		EEDCDB8B1B9F92FA00AE693C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EEDCDB691B9F92FA00AE693C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EEDCDB701B9F92FA00AE693C;
+			remoteInfo = "ios-beacon-tools";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		EEDCDB711B9F92FA00AE693C /* ios-beacon-tools.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ios-beacon-tools.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEDCDB751B9F92FA00AE693C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EEDCDB761B9F92FA00AE693C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		EEDCDB781B9F92FA00AE693C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		EEDCDB791B9F92FA00AE693C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		EEDCDB7F1B9F92FA00AE693C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		EEDCDB811B9F92FA00AE693C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		EEDCDB841B9F92FA00AE693C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		EEDCDB8A1B9F92FA00AE693C /* ios-beacon-toolsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ios-beacon-toolsTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEDCDB8F1B9F92FA00AE693C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EEDCDB901B9F92FA00AE693C /* ios_beacon_toolsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ios_beacon_toolsTests.m; sourceTree = "<group>"; };
+		EEDCDB9A1B9F935500AE693C /* RNLAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNLAppDelegate.h; sourceTree = "<group>"; };
+		EEDCDB9B1B9F935500AE693C /* RNLAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNLAppDelegate.m; sourceTree = "<group>"; };
+		EEDCDB9E1B9F935500AE693C /* RNLBeaconTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNLBeaconTracker.h; sourceTree = "<group>"; };
+		EEDCDB9F1B9F935500AE693C /* RNLBeaconTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNLBeaconTracker.m; sourceTree = "<group>"; };
+		EEDCDBA01B9F935500AE693C /* RNLLocationTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNLLocationTracker.h; sourceTree = "<group>"; };
+		EEDCDBA11B9F935500AE693C /* RNLLocationTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNLLocationTracker.m; sourceTree = "<group>"; };
+		EEDCDBA21B9F935500AE693C /* RNLSignalMeasurement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNLSignalMeasurement.h; sourceTree = "<group>"; };
+		EEDCDBA31B9F935500AE693C /* RNLSignalMeasurement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNLSignalMeasurement.m; sourceTree = "<group>"; };
+		EEDCDBA41B9F935500AE693C /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		EEDCDBA51B9F935500AE693C /* RNLBeacon+Distance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RNLBeacon+Distance.h"; sourceTree = "<group>"; };
+		EEDCDBA61B9F935500AE693C /* RNLBeacon+Distance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RNLBeacon+Distance.m"; sourceTree = "<group>"; };
+		EEDCDBA71B9F935500AE693C /* RNLBeaconScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNLBeaconScanner.h; sourceTree = "<group>"; };
+		EEDCDBA81B9F935500AE693C /* RNLBeaconScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNLBeaconScanner.m; sourceTree = "<group>"; };
+		EEDCDBA91B9F935500AE693C /* RNLBeaconParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNLBeaconParser.h; sourceTree = "<group>"; };
+		EEDCDBAA1B9F935500AE693C /* RNLBeaconParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNLBeaconParser.m; sourceTree = "<group>"; };
+		EEDCDBAB1B9F935500AE693C /* RNLBeacon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNLBeacon.h; sourceTree = "<group>"; };
+		EEDCDBAC1B9F935500AE693C /* RNLBeacon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNLBeacon.m; sourceTree = "<group>"; };
+		EEDCDBAD1B9F935500AE693C /* RNLBeaconTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNLBeaconTableViewController.h; sourceTree = "<group>"; };
+		EEDCDBAE1B9F935500AE693C /* RNLBeaconTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNLBeaconTableViewController.m; sourceTree = "<group>"; };
+		EEDCDBC51B9F93BD00AE693C /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EEDCDB6E1B9F92FA00AE693C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EEDCDB871B9F92FA00AE693C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		EEDCDB681B9F92FA00AE693C = {
+			isa = PBXGroup;
+			children = (
+				EEDCDBC51B9F93BD00AE693C /* LICENSE */,
+				EEDCDB731B9F92FA00AE693C /* ios-beacon-tools */,
+				EEDCDB8D1B9F92FA00AE693C /* ios-beacon-toolsTests */,
+				EEDCDB721B9F92FA00AE693C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EEDCDB721B9F92FA00AE693C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EEDCDB711B9F92FA00AE693C /* ios-beacon-tools.app */,
+				EEDCDB8A1B9F92FA00AE693C /* ios-beacon-toolsTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EEDCDB731B9F92FA00AE693C /* ios-beacon-tools */ = {
+			isa = PBXGroup;
+			children = (
+				EEDCDB9A1B9F935500AE693C /* RNLAppDelegate.h */,
+				EEDCDB9B1B9F935500AE693C /* RNLAppDelegate.m */,
+				EEDCDB9E1B9F935500AE693C /* RNLBeaconTracker.h */,
+				EEDCDB9F1B9F935500AE693C /* RNLBeaconTracker.m */,
+				EEDCDBA01B9F935500AE693C /* RNLLocationTracker.h */,
+				EEDCDBA11B9F935500AE693C /* RNLLocationTracker.m */,
+				EEDCDBA21B9F935500AE693C /* RNLSignalMeasurement.h */,
+				EEDCDBA31B9F935500AE693C /* RNLSignalMeasurement.m */,
+				EEDCDBA41B9F935500AE693C /* Main.storyboard */,
+				EEDCDBA51B9F935500AE693C /* RNLBeacon+Distance.h */,
+				EEDCDBA61B9F935500AE693C /* RNLBeacon+Distance.m */,
+				EEDCDBA71B9F935500AE693C /* RNLBeaconScanner.h */,
+				EEDCDBA81B9F935500AE693C /* RNLBeaconScanner.m */,
+				EEDCDBA91B9F935500AE693C /* RNLBeaconParser.h */,
+				EEDCDBAA1B9F935500AE693C /* RNLBeaconParser.m */,
+				EEDCDBAB1B9F935500AE693C /* RNLBeacon.h */,
+				EEDCDBAC1B9F935500AE693C /* RNLBeacon.m */,
+				EEDCDBAD1B9F935500AE693C /* RNLBeaconTableViewController.h */,
+				EEDCDBAE1B9F935500AE693C /* RNLBeaconTableViewController.m */,
+				EEDCDB781B9F92FA00AE693C /* AppDelegate.h */,
+				EEDCDB791B9F92FA00AE693C /* AppDelegate.m */,
+				EEDCDB7E1B9F92FA00AE693C /* Main.storyboard */,
+				EEDCDB811B9F92FA00AE693C /* Images.xcassets */,
+				EEDCDB831B9F92FA00AE693C /* LaunchScreen.xib */,
+				EEDCDB741B9F92FA00AE693C /* Supporting Files */,
+			);
+			path = "ios-beacon-tools";
+			sourceTree = "<group>";
+		};
+		EEDCDB741B9F92FA00AE693C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				EEDCDB751B9F92FA00AE693C /* Info.plist */,
+				EEDCDB761B9F92FA00AE693C /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		EEDCDB8D1B9F92FA00AE693C /* ios-beacon-toolsTests */ = {
+			isa = PBXGroup;
+			children = (
+				EEDCDB901B9F92FA00AE693C /* ios_beacon_toolsTests.m */,
+				EEDCDB8E1B9F92FA00AE693C /* Supporting Files */,
+			);
+			path = "ios-beacon-toolsTests";
+			sourceTree = "<group>";
+		};
+		EEDCDB8E1B9F92FA00AE693C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				EEDCDB8F1B9F92FA00AE693C /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		EEDCDB701B9F92FA00AE693C /* ios-beacon-tools */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EEDCDB941B9F92FA00AE693C /* Build configuration list for PBXNativeTarget "ios-beacon-tools" */;
+			buildPhases = (
+				EEDCDB6D1B9F92FA00AE693C /* Sources */,
+				EEDCDB6E1B9F92FA00AE693C /* Frameworks */,
+				EEDCDB6F1B9F92FA00AE693C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ios-beacon-tools";
+			productName = "ios-beacon-tools";
+			productReference = EEDCDB711B9F92FA00AE693C /* ios-beacon-tools.app */;
+			productType = "com.apple.product-type.application";
+		};
+		EEDCDB891B9F92FA00AE693C /* ios-beacon-toolsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EEDCDB971B9F92FA00AE693C /* Build configuration list for PBXNativeTarget "ios-beacon-toolsTests" */;
+			buildPhases = (
+				EEDCDB861B9F92FA00AE693C /* Sources */,
+				EEDCDB871B9F92FA00AE693C /* Frameworks */,
+				EEDCDB881B9F92FA00AE693C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EEDCDB8C1B9F92FA00AE693C /* PBXTargetDependency */,
+			);
+			name = "ios-beacon-toolsTests";
+			productName = "ios-beacon-toolsTests";
+			productReference = EEDCDB8A1B9F92FA00AE693C /* ios-beacon-toolsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EEDCDB691B9F92FA00AE693C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0640;
+				ORGANIZATIONNAME = Altbeacon.org;
+				TargetAttributes = {
+					EEDCDB701B9F92FA00AE693C = {
+						CreatedOnToolsVersion = 6.4;
+					};
+					EEDCDB891B9F92FA00AE693C = {
+						CreatedOnToolsVersion = 6.4;
+						TestTargetID = EEDCDB701B9F92FA00AE693C;
+					};
+				};
+			};
+			buildConfigurationList = EEDCDB6C1B9F92FA00AE693C /* Build configuration list for PBXProject "ios-beacon-tools" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = EEDCDB681B9F92FA00AE693C;
+			productRefGroup = EEDCDB721B9F92FA00AE693C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EEDCDB701B9F92FA00AE693C /* ios-beacon-tools */,
+				EEDCDB891B9F92FA00AE693C /* ios-beacon-toolsTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EEDCDB6F1B9F92FA00AE693C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EEDCDB801B9F92FA00AE693C /* Main.storyboard in Resources */,
+				EEDCDB851B9F92FA00AE693C /* LaunchScreen.xib in Resources */,
+				EEDCDB821B9F92FA00AE693C /* Images.xcassets in Resources */,
+				EEDCDBB91B9F935500AE693C /* Main.storyboard in Resources */,
+				EEDCDBC61B9F93BD00AE693C /* LICENSE in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EEDCDB881B9F92FA00AE693C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EEDCDBC71B9F93BD00AE693C /* LICENSE in Resources */,
+				EEDCDBBA1B9F935500AE693C /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EEDCDB6D1B9F92FA00AE693C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EEDCDBC31B9F935500AE693C /* RNLBeaconTableViewController.m in Sources */,
+				EEDCDBB71B9F935500AE693C /* RNLSignalMeasurement.m in Sources */,
+				EEDCDBBF1B9F935500AE693C /* RNLBeaconParser.m in Sources */,
+				EEDCDBBD1B9F935500AE693C /* RNLBeaconScanner.m in Sources */,
+				EEDCDBB51B9F935500AE693C /* RNLLocationTracker.m in Sources */,
+				EEDCDBC11B9F935500AE693C /* RNLBeacon.m in Sources */,
+				EEDCDB7A1B9F92FA00AE693C /* AppDelegate.m in Sources */,
+				EEDCDB771B9F92FA00AE693C /* main.m in Sources */,
+				EEDCDBAF1B9F935500AE693C /* RNLAppDelegate.m in Sources */,
+				EEDCDBBB1B9F935500AE693C /* RNLBeacon+Distance.m in Sources */,
+				EEDCDBB31B9F935500AE693C /* RNLBeaconTracker.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EEDCDB861B9F92FA00AE693C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EEDCDBC21B9F935500AE693C /* RNLBeacon.m in Sources */,
+				EEDCDBB61B9F935500AE693C /* RNLLocationTracker.m in Sources */,
+				EEDCDB911B9F92FA00AE693C /* ios_beacon_toolsTests.m in Sources */,
+				EEDCDBB41B9F935500AE693C /* RNLBeaconTracker.m in Sources */,
+				EEDCDBC41B9F935500AE693C /* RNLBeaconTableViewController.m in Sources */,
+				EEDCDBBE1B9F935500AE693C /* RNLBeaconScanner.m in Sources */,
+				EEDCDBB81B9F935500AE693C /* RNLSignalMeasurement.m in Sources */,
+				EEDCDBB01B9F935500AE693C /* RNLAppDelegate.m in Sources */,
+				EEDCDBBC1B9F935500AE693C /* RNLBeacon+Distance.m in Sources */,
+				EEDCDBC01B9F935500AE693C /* RNLBeaconParser.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EEDCDB8C1B9F92FA00AE693C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EEDCDB701B9F92FA00AE693C /* ios-beacon-tools */;
+			targetProxy = EEDCDB8B1B9F92FA00AE693C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		EEDCDB7E1B9F92FA00AE693C /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EEDCDB7F1B9F92FA00AE693C /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		EEDCDB831B9F92FA00AE693C /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EEDCDB841B9F92FA00AE693C /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		EEDCDB921B9F92FA00AE693C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EEDCDB931B9F92FA00AE693C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		EEDCDB951B9F92FA00AE693C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "ios-beacon-tools/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		EEDCDB961B9F92FA00AE693C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "ios-beacon-tools/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		EEDCDB981B9F92FA00AE693C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "ios-beacon-toolsTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ios-beacon-tools.app/ios-beacon-tools";
+			};
+			name = Debug;
+		};
+		EEDCDB991B9F92FA00AE693C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "ios-beacon-toolsTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ios-beacon-tools.app/ios-beacon-tools";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		EEDCDB6C1B9F92FA00AE693C /* Build configuration list for PBXProject "ios-beacon-tools" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EEDCDB921B9F92FA00AE693C /* Debug */,
+				EEDCDB931B9F92FA00AE693C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EEDCDB941B9F92FA00AE693C /* Build configuration list for PBXNativeTarget "ios-beacon-tools" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EEDCDB951B9F92FA00AE693C /* Debug */,
+				EEDCDB961B9F92FA00AE693C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		EEDCDB971B9F92FA00AE693C /* Build configuration list for PBXNativeTarget "ios-beacon-toolsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EEDCDB981B9F92FA00AE693C /* Debug */,
+				EEDCDB991B9F92FA00AE693C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = EEDCDB691B9F92FA00AE693C /* Project object */;
+}
