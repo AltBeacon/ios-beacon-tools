@@ -53,9 +53,13 @@
   self.beaconParsers = [[NSMutableArray alloc] init];
   RNLBeaconParser *altBeaconParser = [[RNLBeaconParser alloc] init];
   [altBeaconParser setBeaconLayout:@"m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25" error: Nil ];
+
+  RNLBeaconParser *eddystoneBeaconParser = [[RNLBeaconParser alloc] init];
+  [eddystoneBeaconParser setBeaconLayout:@"s:0-1=feaa,m:2-2=00,p:3-3:-41,i:4-13,i:14-19" error: Nil ];
+
   RNLBeaconParser *uidBeaconParser = [[RNLBeaconParser alloc] init];
   [uidBeaconParser setBeaconLayout:@"s:0-1=feaa,m:2-2=00,p:3-3:-41,i:4-13,i:14-19" error: Nil];
-  self.beaconParsers = @[ altBeaconParser, uidBeaconParser ];
+  self.beaconParsers = @[ altBeaconParser, eddystoneBeaconParser, uidBeaconParser ];
   self.debugEnabled = NO;
   
   self.beaconTracker = [[RNLBeaconTracker alloc] init];
@@ -130,6 +134,9 @@
         NSData *adServiceData = [serviceData objectForKey:key];
         if (adServiceData) {
           beacon = [beaconParser fromScanData: adServiceData withRssi: RSSI forDevice: peripheral serviceUuid: uuidNumber];
+        }
+        if (beacon != Nil) {
+          break;
         }
       }
     }
