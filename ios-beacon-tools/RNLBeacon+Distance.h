@@ -35,7 +35,8 @@
 @property NSDate *lastCalculated;
 @property NSNumber *runningAverageRssi;
 @property (readonly) CLLocationAccuracy distance;
-
+// calculated distance if available or core location distance
+@property (readonly) CLLocationAccuracy hybridDistance;
 -(void) applyRssiMeasurements: (RNLBeacon *)beacon;
 +(double) secondsToAverage;
 +(void) secondsToAverage: (double) seconds;

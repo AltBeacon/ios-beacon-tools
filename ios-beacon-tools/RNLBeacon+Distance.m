@@ -144,6 +144,15 @@ static double _secondsToAverage = 5.0;
   return distance;
 }
 
+- (CLLocationAccuracy) hybridDistance {
+  CLLocationAccuracy distance = self.distance;
+  if ( distance < 0) {
+    distance = self.coreLocationAccuracy;
+  }
+  return distance;
+}
+
+
 +(double) distanceForRSSI:(double)rssi forPower:(int)txPower {
   // use coefficient values from spreadsheet for iPhone 4S
   double coefficient1 = 2.922026; // multiplier

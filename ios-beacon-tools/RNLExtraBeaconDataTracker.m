@@ -2,7 +2,7 @@
  * Radius Networks, Inc.
  * http://www.radiusnetworks.com
  *
- * @author Scott Yoder
+ * @author David G. Young
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,25 +21,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+#import "RNLExtraBeaconDataTracker.h"
 
+@implementation RNLExtraBeaconDataTracker {
+  NSMutableDictionary *_trackedExtraBeaconDictionary;
+}
 
-#import <Foundation/Foundation.h>
-#import <CoreBluetooth/CoreBluetooth.h>
-#import "RNLBeacon.h"
+- (id)init {
+  if (self = [super init]) {
+    _trackedExtraBeaconDictionary = [[NSMutableDictionary alloc] init];
+  }
+  return self;
+}
 
-@interface RNLBeaconScanner : NSObject <CBCentralManagerDelegate>
+- (RNLBeacon *) extraDataBeaconForBeacon: (RNLBeacon *) beacon {
+  return [_trackedExtraBeaconDictionary objectForKey:beacon.bluetoothIdentifier];
+}
 
-+ (instancetype) sharedBeaconScanner;
+- (NSArray *) extraDataFieldsForBeacon: (RNLBeacon *) beacon {
+  return [self extraDataBeaconForBeacon:beacon].dataFields;
+}
 
-- (void) startScanning;
-- (void) stopScanning;
-- (NSNumber *) calibratedRSSIFor: (RNLBeacon *)beacon;
-- (NSArray *) trackedBeacons;
-- (NSArray *) extraDataFieldsForBeacon: (RNLBeacon *) beacon;
-- (void) startRangingBeaconsWithBluetoothIdentifier: (NSString *) bluetoothIdentifier id1:  (NSString *) id1 id2: (NSString*) id2 id3: (NSString *) id3;
-- (void) stopRangingBeacons;
-
-
-@property Boolean debugEnabled;
-@property NSMutableArray *simulatedBeacons;
+-(void) updateWithRangedBeacon: (RNLBeacon *) beacon {
+  [_trackedExtraBeaconDictionary setObject:beacon forKey:beacon.bluetoothIdentifier];
+  NSLog(@"Tracking %d extra data beacons", (unsigned int)_trackedExtraBeaconDictionary.count);
+}
 @end

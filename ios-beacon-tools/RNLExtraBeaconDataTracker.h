@@ -2,7 +2,7 @@
  * Radius Networks, Inc.
  * http://www.radiusnetworks.com
  *
- * @author Scott Yoder
+ * @author David G. Young
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -22,24 +22,11 @@
  * under the License.
  */
 
-
 #import <Foundation/Foundation.h>
-#import <CoreBluetooth/CoreBluetooth.h>
 #import "RNLBeacon.h"
 
-@interface RNLBeaconScanner : NSObject <CBCentralManagerDelegate>
-
-+ (instancetype) sharedBeaconScanner;
-
-- (void) startScanning;
-- (void) stopScanning;
-- (NSNumber *) calibratedRSSIFor: (RNLBeacon *)beacon;
-- (NSArray *) trackedBeacons;
-- (NSArray *) extraDataFieldsForBeacon: (RNLBeacon *) beacon;
-- (void) startRangingBeaconsWithBluetoothIdentifier: (NSString *) bluetoothIdentifier id1:  (NSString *) id1 id2: (NSString*) id2 id3: (NSString *) id3;
-- (void) stopRangingBeacons;
-
-
-@property Boolean debugEnabled;
-@property NSMutableArray *simulatedBeacons;
+@interface RNLExtraBeaconDataTracker : NSObject
+-(void) updateWithRangedBeacon: (RNLBeacon *) beacon;
+-(RNLBeacon *) extraDataBeaconForBeacon: (RNLBeacon *) beacon;
+-(NSArray *) extraDataFieldsForBeacon: (RNLBeacon *) beacon;
 @end

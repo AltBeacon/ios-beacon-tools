@@ -36,6 +36,11 @@
 @property (nonatomic) BOOL scanning;
 @property (strong, nonatomic) NSArray *beaconParsers;
 @property (strong, nonatomic) RNLBeaconTracker *beaconTracker;
+@property (strong, nonatomic) NSString *rangingBluetoothIdentifier;
+@property (strong, nonatomic) NSString *rangingId1;
+@property (strong, nonatomic) NSString *rangingId2;
+@property (strong, nonatomic) NSString *rangingId3;
+@property (strong, nonatomic) NSTimer *rangingTimer;
 @end
 
 @implementation RNLBeaconScanner
@@ -55,32 +60,67 @@
   [altBeaconParser setBeaconLayout:@"m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25" error: Nil ];
   RNLBeaconParser *uidBeaconParser = [[RNLBeaconParser alloc] init];
   [uidBeaconParser setBeaconLayout:@"s:0-1=feaa,m:2-2=00,p:3-3:-41,i:4-13,i:14-19" error: Nil];
-  self.beaconParsers = @[ altBeaconParser, uidBeaconParser ];
-  self.debugEnabled = NO;
-  
-  self.beaconTracker = [[RNLBeaconTracker alloc] init];
+  RNLBeaconParser *urlBeaconParser = [[RNLBeaconParser alloc] init];
+  [urlBeaconParser setBeaconLayout:@"s:0-1=feaa,m:2-2=10,p:3-3:-41,i:4-20v" error: Nil];
+  RNLBeaconParser *eidBeaconParser = [[RNLBeaconParser alloc] init];
+  [eidBeaconParser setBeaconLayout:@"s:0-1=feaa,m:2-2=30,p:3-3:-41,i:4-11" error: Nil];
+  RNLBeaconParser *tlmBeaconParser = [[RNLBeaconParser alloc] init];
+  [tlmBeaconParser setBeaconLayout:@"x,s:0-1=feaa,m:2-2=20,d:3-3,d:4-5,d:6-7,d:8-11,d:12-15" error: Nil];
 
-  [self startScanningAltbeacons];
+  self.beaconParsers = @[ altBeaconParser, uidBeaconParser, urlBeaconParser, eidBeaconParser, tlmBeaconParser];
+  self.debugEnabled = NO;
+  self.beaconTracker = [[RNLBeaconTracker alloc] init];
+  [self startScanning];
   return self;
 }
 - (void) dealloc {
-  [self stopScanningAltbeacons];
+  [self stopScanning];
 }
 
-- (void)startScanningAltbeacons {
+- (void)startScanning {
+  [self registerSimulatedBeacons];
   if (!self.cbManager) {
-    self.cbManager = [[CBCentralManager alloc] initWithDelegate:self queue:dispatch_get_main_queue()];
+    self.cbManager = [[CBCentralManager alloc] initWithDelegate:self queue:dispatch_get_main_queue()
+                                       options:@{ CBCentralManagerOptionRestoreIdentifierKey:
+                                                    @"myCentralManagerIdentifier" }];
     self.scanning = YES;
   }
 }
 
-- (void)stopScanningAltbeacons {
+- (void)stopScanning {
   [self.cbManager stopScan];
 }
 
 - (NSArray *)trackedBeacons {
+  [self.beaconTracker purgeExpiredBeacons];
   return self.beaconTracker.trackedBeacons;
 }
+
+- (NSArray *)extraDataFieldsForBeacon: (RNLBeacon *) beacon {
+  return [self.beaconTracker.extraBeaconDataTracker extraDataFieldsForBeacon:beacon];
+}
+
+- (void) startRangingBeaconsWithBluetoothIdentifier: (NSString *) bluetoothIdentifier id1:  (NSString *) id1 id2: (NSString*) id2 id3: (NSString *) id3 {
+  self.rangingBluetoothIdentifier = bluetoothIdentifier;
+  self.rangingId1 = id1;
+  self.rangingId2 = id2;
+  self.rangingId3 = id3;
+  self.rangingTimer = [NSTimer scheduledTimerWithTimeInterval:1  target: self selector: @selector(rangingTimerExpired) userInfo: nil repeats: YES];
+}
+
+- (void) stopRangingBeacons {
+  if (self.rangingTimer) {
+    [self.rangingTimer invalidate];
+    self.rangingTimer = nil;
+  }
+}
+
+- (void) rangingTimerExpired {
+  NSArray *beacons = [RNLBeacon matchBeacons: self.trackedBeacons bluetoothIdentifier: self.rangingBluetoothIdentifier id1: self.rangingId1 id2: self.rangingId2 id3: self.rangingId3];
+  [[NSNotificationCenter defaultCenter] postNotificationName: @"didRangeBeacons" object: nil userInfo: @{@"beacons": beacons}];
+  
+}
+
 
 - (NSNumber *)calibratedRSSIFor:(RNLBeacon *)beacon {
   NSString *key = [NSString stringWithFormat:@"%@ %@ %@", beacon.id1, beacon.id2, beacon.id3];
@@ -95,8 +135,37 @@
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
   if (central.state == CBCentralManagerStatePoweredOn && self.scanning) {
+    CBUUID *eddystone16BitUUID = [CBUUID UUIDWithString:@"FEAA"];
+    NSLog(@"eddy uuid is %@", [eddystone16BitUUID UUIDString]);
+    [self.cbManager scanForPeripheralsWithServices:@[eddystone16BitUUID] options:@{CBCentralManagerScanOptionAllowDuplicatesKey : @(YES)}];
+    // this scans for AltBeacons
     [self.cbManager scanForPeripheralsWithServices:nil options:@{CBCentralManagerScanOptionAllowDuplicatesKey : @(YES)}];
+
   }
+  else {
+    if (central.state == CBCentralManagerStateUnknown) {
+      NSLog(@"CoreBluetooth state UNKNOWN");
+    }
+    else if (central.state == CBCentralManagerStateResetting)  {
+      NSLog(@"CoreBluetooth state RESETTING");
+    }
+    else if (central.state == CBCentralManagerStateUnsupported)  {
+      NSLog(@"CoreBluetooth state UNSUPPORTED");
+    }
+    else if (central.state == CBCentralManagerStateUnauthorized)  {
+      NSLog(@"CoreBluetooth state UNAUTHORIZED");
+    }
+    else if (central.state == CBCentralManagerStatePoweredOff)  {
+      NSLog(@"CoreBluetooth state POWERED OFF");
+    }
+  }
+}
+
+- (void)centralManager:(CBCentralManager *)central
+      willRestoreState:(NSDictionary *)state {
+  
+  NSArray *peripherals = state[CBCentralManagerRestoredStatePeripheralsKey];
+  NSLog(@"Bluetooth restoration with peripheral count: %ld", (unsigned long) peripherals.count);
 }
 
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI {
@@ -111,6 +180,7 @@
         NSLog(@"didDiscoverPeripheral with manufacturer data");
       }
       beacon = [beaconParser fromScanData: adData withRssi: RSSI forDevice: peripheral serviceUuid: Nil];
+      beacon.bluetoothIdentifier = [peripheral.identifier UUIDString];
     }
     else if (serviceData != Nil) {
       if (self.debugEnabled) {
@@ -143,8 +213,15 @@
     [self.beaconTracker updateWithRangedBeacons: @[beacon]];
     NSLog(@"Detected beacon: %@", key);
   }
+  [self registerSimulatedBeacons];
+
   
-  
+}
+
+-(void) registerSimulatedBeacons {
+  if (self.simulatedBeacons != nil) {
+    [self.beaconTracker updateWithRangedBeacons:self.simulatedBeacons];
+  }
 }
 
 @end

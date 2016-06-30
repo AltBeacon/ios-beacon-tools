@@ -26,6 +26,7 @@
 #import "RNLBeaconTracker.h"
 #import "RNLBeacon.h"
 #import "RNLBeacon+Distance.h"
+#import "RNLExtraBeaconDataTracker.h"
 
 @implementation RNLBeaconTracker {
   NSMutableDictionary *_trackedBeaconDictionary;
@@ -35,6 +36,7 @@ static double const SECONDS_TO_TRACK = 5.0;
 - (id)init {
   if (self = [super init]) {
     _trackedBeaconDictionary = [[NSMutableDictionary alloc] init];
+    self.extraBeaconDataTracker = [[RNLExtraBeaconDataTracker alloc] init];
   }
   return self;
 }
@@ -48,32 +50,43 @@ static double const SECONDS_TO_TRACK = 5.0;
 }
 
 -(void) updateWithRangedBeacons: (NSArray *) beacons {
-  NSDate *now = [[NSDate alloc] init];
-  NSMutableDictionary *newTrackedBeaconDictionary = [[NSMutableDictionary alloc] init];
-  // add all newly ranged beacons to the newTrackedBeaconDictionary
-  for (RNLBeacon *rangedBeacon in beacons) {
-    NSString *rangedBeaconKey = [self identifierStringForBeacon:rangedBeacon];
-    RNLBeacon *trackedRangedBeacon = [_trackedBeaconDictionary objectForKey:rangedBeaconKey];
-    [rangedBeacon applyRssiMeasurements: trackedRangedBeacon];
-    [newTrackedBeaconDictionary setObject: rangedBeacon forKey: rangedBeaconKey];
-  }
-  // now go through and find any beacons we did not get in this ranging cycle, but that should
-  // still be tracked, and add them to the newTrackedBeaconDictionary
-  for (NSString *beaconKey in [_trackedBeaconDictionary allKeys]) {
-    if ([newTrackedBeaconDictionary objectForKey:beaconKey] == Nil) {
-      RNLBeacon *oldTrackedBeacon = [_trackedBeaconDictionary objectForKey:beaconKey];
-      // make sure we should still be tracking this beacon
-      if ([now timeIntervalSinceDate: oldTrackedBeacon.lastDetected] < SECONDS_TO_TRACK) {
-        [newTrackedBeaconDictionary setObject: oldTrackedBeacon forKey: beaconKey];
+
+  @synchronized(self) {
+    NSDate *now = [[NSDate alloc] init];
+    NSMutableDictionary *newTrackedBeaconDictionary = [[NSMutableDictionary alloc] init];
+    // add all newly ranged beacons to the newTrackedBeaconDictionary
+    for (RNLBeacon *rangedBeacon in beacons) {
+      if (rangedBeacon.extraFrame) {
+        [_extraBeaconDataTracker updateWithRangedBeacon:rangedBeacon];
       }
       else {
-        NSLog(@"Stopping tracking: %@ because we have not seen it in %f seconds", beaconKey, SECONDS_TO_TRACK);
+        NSString *rangedBeaconKey = [self identifierStringForBeacon:rangedBeacon];
+        RNLBeacon *trackedRangedBeacon = [_trackedBeaconDictionary objectForKey:rangedBeaconKey];
+        [rangedBeacon applyRssiMeasurements: trackedRangedBeacon];
+        [newTrackedBeaconDictionary setObject: rangedBeacon forKey: rangedBeaconKey];
       }
     }
-  }
-  @synchronized(self) {
+    // now go through and find any beacons we did not get in this ranging cycle, but that should
+    // still be tracked, and add them to the newTrackedBeaconDictionary
+    for (NSString *beaconKey in [_trackedBeaconDictionary allKeys]) {
+      if ([newTrackedBeaconDictionary objectForKey:beaconKey] == Nil) {
+        RNLBeacon *oldTrackedBeacon = [_trackedBeaconDictionary objectForKey:beaconKey];
+        // make sure we should still be tracking this beacon
+        if ([now timeIntervalSinceDate: oldTrackedBeacon.lastDetected] < SECONDS_TO_TRACK) {
+          [newTrackedBeaconDictionary setObject: oldTrackedBeacon forKey: beaconKey];
+        }
+        else {
+          NSLog(@"Stopping tracking: %@ because we have not seen it in %f seconds", beaconKey, SECONDS_TO_TRACK);
+        }
+      }
+    }
     _trackedBeaconDictionary = newTrackedBeaconDictionary;
+
   }
+}
+
+-(void) purgeExpiredBeacons {
+  [self updateWithRangedBeacons:@[]];
 }
 
 -(NSString *) identifierStringForBeacon: (RNLBeacon *) beacon {

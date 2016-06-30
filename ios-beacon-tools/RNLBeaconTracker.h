@@ -23,8 +23,12 @@
  */
 
 #import <Foundation/Foundation.h>
+#import "RNLExtraBeaconDataTracker.h"
 
 @interface RNLBeaconTracker : NSObject
 @property (readonly) NSArray *trackedBeacons;
+@property (strong, nonatomic) RNLExtraBeaconDataTracker *extraBeaconDataTracker;
+
 -(void) updateWithRangedBeacons: (NSArray *) beacons;
+-(void) purgeExpiredBeacons;
 @end

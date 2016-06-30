@@ -24,13 +24,15 @@
 
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CoreLocation.h>
 
-@interface RNLBeacon : NSObject
+@interface RNLBeacon : NSObject <NSCopying>
 @property (strong, nonatomic) NSArray *identifiers;
 @property (strong, nonatomic) NSArray *dataFields;
 @property (strong, nonatomic) NSNumber *measuredPower;
 @property (strong, nonatomic) NSNumber *rssi;
 @property (strong, nonatomic) NSNumber *beaconTypeCode;
+@property (nonatomic) BOOL extraFrame;
 // This is the two byte manuracturer code, e.g. 0x0118 for Radius Networks
 // Only populated for manufacturer beacon types
 @property (strong, nonatomic) NSNumber *manufacturer;
@@ -43,5 +45,11 @@
 @property (readonly) NSString *id2;
 @property (readonly) NSString *id3;
 @property (readonly) double coreLocationAccuracy;
-
+// This is the Corebluetooth perhipheral identifier as a string
+@property (strong, nonatomic) NSString *bluetoothIdentifier;
++ (NSArray *) wrapCLBeacons:(NSArray *) clBeacons;
++ (RNLBeacon *) wrapCLBeacon:(CLBeacon *)clBeacons;
+- (BOOL) isEqualToBeacon: (RNLBeacon *)other;
++ (NSArray *) matchBeacons: (NSArray * ) trackedBeacons bluetoothIdentifier:(NSString *)rangingBluetoothIdentifier id1: (NSString *) id1 id2: (NSString *) id2 id3: (NSString *) id3;
++ (NSData *) dataFromIdentifier: (NSString*) identifier;
 @end

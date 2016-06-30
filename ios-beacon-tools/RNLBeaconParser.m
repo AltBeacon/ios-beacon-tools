@@ -30,6 +30,7 @@
 @property (strong, nonatomic) NSMutableArray *identifierStartOffsets;
 @property (strong, nonatomic) NSMutableArray *identifierEndOffsets;
 @property (strong, nonatomic) NSMutableArray *identifierLittleEndianFlags;
+@property (strong, nonatomic) NSMutableArray *identifierVariableLengthFlags;
 @property (strong, nonatomic) NSMutableArray *dataStartOffsets;
 @property (strong, nonatomic) NSMutableArray *dataEndOffsets;
 @property (strong, nonatomic) NSMutableArray *dataLittleEndianFlags;
@@ -41,6 +42,7 @@
 @property (strong, nonatomic) NSNumber *serviceUuidStartOffset;
 @property (strong, nonatomic) NSNumber *serviceUuidEndOffset;
 @property (strong, nonatomic) NSNumber *serviceUuid;
+@property (nonatomic) BOOL extraFrame;
 @end
 
 @implementation RNLBeaconParser {
@@ -64,6 +66,7 @@ static const NSString *X_PATTERN = @"x";
     self.dataEndOffsets = [[NSMutableArray alloc] init];
     self.dataLittleEndianFlags = [[NSMutableArray alloc] init];
     self.identifierLittleEndianFlags = [[NSMutableArray alloc] init];
+    self.identifierVariableLengthFlags = [[NSMutableArray alloc] init];
   }
   return self;
 }
@@ -83,6 +86,9 @@ static const NSString *X_PATTERN = @"x";
  *   i - identifier (at least one required, multiple allowed)
  *   p - power calibration field (exactly one required)
  *   d - data field (optional, multiple allowed)
+ *   x - extra layout.  Signifies that the layout is secondary to a primary layout with the same
+ *       matching byte sequence (or ServiceUuid).  Extra layouts do not require power or
+ *       identifier fields and create Beacon objects without identifiers.
  * </pre>
  *
  * <p>Each prefix is followed by a colon, then an inclusive decimal byte offset for the field from
@@ -142,11 +148,20 @@ static const NSString *X_PATTERN = @"x";
       NSNumber *startOffset = [NSNumber numberWithLong:[group1 integerValue]];
       NSNumber *endOffset = [NSNumber numberWithLong:[group2 integerValue]];
       NSNumber *littleEndian = [NSNumber numberWithBool: [group3 isEqualToString:@"l"]];
+      NSNumber *variableLength = [NSNumber numberWithBool: [group3 isEqualToString:@"v"]];
       [self.identifierLittleEndianFlags addObject: littleEndian];
       [self.identifierStartOffsets addObject: startOffset];
       [self.identifierEndOffsets addObject: endOffset];
+      [self.identifierVariableLengthFlags addObject: variableLength];
     }
 
+    regex = [NSRegularExpression regularExpressionWithPattern: (NSString *)X_PATTERN options:0 error:nil];
+    matches = [regex matchesInString:term options:0 range: textRange];
+    if (matches.count > 0) {
+      found = YES;
+      self.extraFrame = YES;
+    }
+    
     regex = [NSRegularExpression regularExpressionWithPattern: (NSString *)S_PATTERN options:0 error:nil];
     matches = [regex matchesInString:term options:0 range: textRange];
     for (NSTextCheckingResult* match in matches) {
@@ -212,7 +227,7 @@ static const NSString *X_PATTERN = @"x";
       errorString = NSLocalizedString(@"Cannot parse beacon layout term %@", term);
     }
   }
-  if (self.powerStartOffset == Nil || self.powerEndOffset == Nil) {
+  if ((self.powerStartOffset == Nil || self.powerEndOffset == Nil) && self.extraFrame == NO) {
     errorCode = -2;
     errorString = NSLocalizedString(@"You must supply a power byte offset with a prefix of 'p'", @"");
   }
@@ -220,7 +235,7 @@ static const NSString *X_PATTERN = @"x";
     errorCode = -3;
     errorString = NSLocalizedString(@"You must supply a matching beacon type expression with a prefix of 'm', or a service uuid expression with a prefix of 's'", @"");
   }
-  if (self.identifierStartOffsets.count == 0 || self.identifierEndOffsets.count == 0) {
+  if ((self.identifierStartOffsets.count == 0 || self.identifierEndOffsets.count == 0) && self.extraFrame == NO) {
     errorCode = -4;
     errorString = NSLocalizedString(@"You must supply at least one identifier offset withh a prefix of 'i'", @"");
   }
@@ -239,7 +254,7 @@ static const NSString *X_PATTERN = @"x";
 
 
 /**
- * Construct a Beacon from a Bluetooth LE packet collected by Android's Bluetooth APIs,
+ * Construct a Beacon from a Bluetooth LE packet collected by CoreBluetooth,
  * including the raw bluetooth device info
  *
  * param scanData The actual packet bytes
@@ -270,8 +285,15 @@ static const NSString *X_PATTERN = @"x";
     startByte = -2; // serviceUuids are stripped out of the data on iOS, so we have to adjust offsets
   }
   if ([self biggestOffset] +1 > scanData.length - startByte) {
-    //NSLog(@"Advertisement of length %ld is too short to match layout that ends on offset %d", scanData.length+startByte, [self biggestOffset]);
-    return Nil;
+    BOOL variableLength = NO;
+    for (NSNumber *variableLengthFlag in self.identifierVariableLengthFlags) {
+      if ([variableLengthFlag  isEqual: @1]) {
+        variableLength = YES;
+      }
+    }
+    if (!variableLength) {
+      return Nil;
+    }
   }
   
   if (scanData.length < startByte+beaconTypeCodeLength+[self.matchingBeaconTypeCodeStartOffset intValue]) {
@@ -280,10 +302,6 @@ static const NSString *X_PATTERN = @"x";
   else {
     if ([self byteArray: bytes+startByte+[self.matchingBeaconTypeCodeStartOffset intValue] matchesByteArray: beaconTypeCodeBytes withLength: beaconTypeCodeLength]) {
       patternFound = YES;
-      //NSLog(@"matching type code found");
-    }
-    else {
-      //NSLog(@"matching type code not found");
     }
   }
   
@@ -292,6 +310,7 @@ static const NSString *X_PATTERN = @"x";
     return Nil;
   }
   
+  beacon.extraFrame = self.extraFrame;
   beacon.name = device.name;
   beacon.rssi = rssi;
   beacon.beaconTypeCode = self.matchingBeaconTypeCode;
@@ -302,25 +321,33 @@ static const NSString *X_PATTERN = @"x";
   for (int i = 0; i < self.identifierEndOffsets.count; i++) {
     int startOffset = [[self.identifierStartOffsets objectAtIndex: i] intValue];
     int endOffset = [[self.identifierEndOffsets objectAtIndex: i] intValue];
-    int length = endOffset - startOffset +1;
     BOOL littleEndian = [[self.identifierLittleEndianFlags objectAtIndex: i] boolValue];
+    BOOL variableLength = [[self.identifierVariableLengthFlags objectAtIndex: i] boolValue];
+    if (variableLength) {
+      if (endOffset+startByte >= scanData.length) {
+        endOffset = (int) scanData.length-1-startByte;
+      }
+    }
+    int length = endOffset - startOffset +1;
     NSString *idString = [self formattedStringIdentiferFromByteArray: bytes+startOffset+startByte ofLength: length asLittleEndian:littleEndian];
     [identifiers addObject:idString];
   }
   beacon.identifiers = identifiers;
   
   int measuredPower = 0;
-  int startOffset = [self.powerStartOffset intValue];
-  int endOffset = [self.powerEndOffset intValue];
-  int length = endOffset-startOffset +1;
-  NSString *powerString = [self formattedStringIdentiferFromByteArray:bytes+startOffset+startByte ofLength:length asLittleEndian:NO];
-  measuredPower = (int) [powerString integerValue];
-  // make sure it is a signed integer
-  if (measuredPower > 127) {
-    measuredPower -= 256;
+  if (self.powerStartOffset != nil) { // Don't parse measured power if it is not in format
+    int startOffset = [self.powerStartOffset intValue];
+    int endOffset = [self.powerEndOffset intValue];
+    int length = endOffset-startOffset +1;
+    NSString *powerString = [self formattedStringIdentiferFromByteArray:bytes+startOffset+startByte ofLength:length asLittleEndian:NO];
+    measuredPower = (int) [powerString integerValue];
+    // make sure it is a signed integer
+    if (measuredPower > 127) {
+      measuredPower -= 256;
+    }
+    measuredPower += [self.powerCorrection integerValue];
+    beacon.measuredPower = [NSNumber numberWithInt: measuredPower];
   }
-  measuredPower += [self.powerCorrection integerValue];
-  beacon.measuredPower = [NSNumber numberWithInt: measuredPower];
   
   
   NSMutableArray *dataFields = [[NSMutableArray alloc] init];
@@ -334,11 +361,19 @@ static const NSString *X_PATTERN = @"x";
   }
   
   beacon.dataFields = dataFields;
-  
+  beacon.serviceUuid = serviceUuid;
   
   // We will not expose the bluetooth mac address because it gets spoofed on iOS and is of no value
-  NSString *manufacturerString = [self formattedStringIdentiferFromByteArray:bytes ofLength:2 asLittleEndian:NO];
-  beacon.manufacturer = [NSNumber numberWithLong: [manufacturerString integerValue]];
+  // but we will track the uuid as a bluetooth identifier proxy
+  beacon.bluetoothIdentifier = [device.identifier UUIDString];
+
+  if (beacon.serviceUuid.intValue != -1) {
+    NSString *manufacturerString = [self formattedStringIdentiferFromByteArray:bytes ofLength:2 asLittleEndian:NO];
+    beacon.manufacturer = [NSNumber numberWithLong: [manufacturerString integerValue]];
+  }
+  else {
+    beacon.manufacturer = @-1;
+  }
 
   return beacon;
 }

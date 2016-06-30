@@ -47,7 +47,6 @@ static double const MIN_SECS_BEFORE_CLOSEST_BEACON_SWITCH = 5.0;
 
 - (id)init {
   if (self = [super init]) {
-    //[self registerForPKNotifications];
     self.beaconTracker = [[RNLBeaconTracker alloc] init];
     self.useCoreLocationRanging = YES;
     [RNLBeaconScanner sharedBeaconScanner]; // simply referncing it will make it spin up
@@ -56,7 +55,6 @@ static double const MIN_SECS_BEFORE_CLOSEST_BEACON_SWITCH = 5.0;
 }
 
 - (void)dealloc {
-  //[self unregisterForPKNotifications];
 }
 
 

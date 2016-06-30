@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EE61CF7D1D2564CA00A29C92 /* RNLExtraBeaconDataTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = EE61CF7A1D2564CA00A29C92 /* RNLExtraBeaconDataTracker.m */; };
+		EE61CF7E1D2564CA00A29C92 /* RNLURLBeaconCompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = EE61CF7C1D2564CA00A29C92 /* RNLURLBeaconCompressor.m */; };
 		EEDCDB771B9F92FA00AE693C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDB761B9F92FA00AE693C /* main.m */; };
 		EEDCDB7A1B9F92FA00AE693C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDB791B9F92FA00AE693C /* AppDelegate.m */; };
 		EEDCDB801B9F92FA00AE693C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEDCDB7E1B9F92FA00AE693C /* Main.storyboard */; };
@@ -48,6 +50,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EE61CF791D2564CA00A29C92 /* RNLExtraBeaconDataTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNLExtraBeaconDataTracker.h; sourceTree = "<group>"; };
+		EE61CF7A1D2564CA00A29C92 /* RNLExtraBeaconDataTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNLExtraBeaconDataTracker.m; sourceTree = "<group>"; };
+		EE61CF7B1D2564CA00A29C92 /* RNLURLBeaconCompressor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNLURLBeaconCompressor.h; sourceTree = "<group>"; };
+		EE61CF7C1D2564CA00A29C92 /* RNLURLBeaconCompressor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNLURLBeaconCompressor.m; sourceTree = "<group>"; };
 		EEDCDB711B9F92FA00AE693C /* ios-beacon-tools.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ios-beacon-tools.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEDCDB751B9F92FA00AE693C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EEDCDB761B9F92FA00AE693C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -121,6 +127,10 @@
 		EEDCDB731B9F92FA00AE693C /* ios-beacon-tools */ = {
 			isa = PBXGroup;
 			children = (
+				EE61CF791D2564CA00A29C92 /* RNLExtraBeaconDataTracker.h */,
+				EE61CF7A1D2564CA00A29C92 /* RNLExtraBeaconDataTracker.m */,
+				EE61CF7B1D2564CA00A29C92 /* RNLURLBeaconCompressor.h */,
+				EE61CF7C1D2564CA00A29C92 /* RNLURLBeaconCompressor.m */,
 				EEDCDB9A1B9F935500AE693C /* RNLAppDelegate.h */,
 				EEDCDB9B1B9F935500AE693C /* RNLAppDelegate.m */,
 				EEDCDB9E1B9F935500AE693C /* RNLBeaconTracker.h */,
@@ -288,8 +298,10 @@
 				EEDCDBC11B9F935500AE693C /* RNLBeacon.m in Sources */,
 				EEDCDB7A1B9F92FA00AE693C /* AppDelegate.m in Sources */,
 				EEDCDB771B9F92FA00AE693C /* main.m in Sources */,
+				EE61CF7D1D2564CA00A29C92 /* RNLExtraBeaconDataTracker.m in Sources */,
 				EEDCDBAF1B9F935500AE693C /* RNLAppDelegate.m in Sources */,
 				EEDCDBBB1B9F935500AE693C /* RNLBeacon+Distance.m in Sources */,
+				EE61CF7E1D2564CA00A29C92 /* RNLURLBeaconCompressor.m in Sources */,
 				EEDCDBB31B9F935500AE693C /* RNLBeaconTracker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -498,6 +510,7 @@
 				EEDCDB961B9F92FA00AE693C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		EEDCDB971B9F92FA00AE693C /* Build configuration list for PBXNativeTarget "ios-beacon-toolsTests" */ = {
 			isa = XCConfigurationList;
@@ -506,6 +519,7 @@
 				EEDCDB991B9F92FA00AE693C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
