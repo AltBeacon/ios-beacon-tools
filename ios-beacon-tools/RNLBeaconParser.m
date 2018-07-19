@@ -30,6 +30,7 @@
 @property (strong, nonatomic) NSMutableArray *identifierStartOffsets;
 @property (strong, nonatomic) NSMutableArray *identifierEndOffsets;
 @property (strong, nonatomic) NSMutableArray *identifierLittleEndianFlags;
+@property (strong, nonatomic) NSMutableArray *identifierVariableLengthFlags;
 @property (strong, nonatomic) NSMutableArray *dataStartOffsets;
 @property (strong, nonatomic) NSMutableArray *dataEndOffsets;
 @property (strong, nonatomic) NSMutableArray *dataLittleEndianFlags;
@@ -41,6 +42,7 @@
 @property (strong, nonatomic) NSNumber *serviceUuidStartOffset;
 @property (strong, nonatomic) NSNumber *serviceUuidEndOffset;
 @property (strong, nonatomic) NSNumber *serviceUuid;
+@property (nonatomic) BOOL extraFrame;
 @end
 
 @implementation RNLBeaconParser {
@@ -57,15 +59,16 @@ static const NSString *X_PATTERN = @"x";
  * Makes a new BeaconParser.  Should normally be immediately followed by a call to #setLayout
  */
 - (id)init {
-  if (self = [super init]) {
-    self.identifierStartOffsets = [[NSMutableArray alloc] init];
-    self.identifierEndOffsets = [[NSMutableArray alloc] init];
-    self.dataStartOffsets = [[NSMutableArray alloc] init];
-    self.dataEndOffsets = [[NSMutableArray alloc] init];
-    self.dataLittleEndianFlags = [[NSMutableArray alloc] init];
-    self.identifierLittleEndianFlags = [[NSMutableArray alloc] init];
-  }
-  return self;
+    if (self = [super init]) {
+        self.identifierStartOffsets = [[NSMutableArray alloc] init];
+        self.identifierEndOffsets = [[NSMutableArray alloc] init];
+        self.dataStartOffsets = [[NSMutableArray alloc] init];
+        self.dataEndOffsets = [[NSMutableArray alloc] init];
+        self.dataLittleEndianFlags = [[NSMutableArray alloc] init];
+        self.identifierLittleEndianFlags = [[NSMutableArray alloc] init];
+        self.identifierVariableLengthFlags = [[NSMutableArray alloc] init];
+    }
+    return self;
 }
 
 /**
@@ -83,6 +86,9 @@ static const NSString *X_PATTERN = @"x";
  *   i - identifier (at least one required, multiple allowed)
  *   p - power calibration field (exactly one required)
  *   d - data field (optional, multiple allowed)
+ *   x - extra layout.  Signifies that the layout is secondary to a primary layout with the same
+ *       matching byte sequence (or ServiceUuid).  Extra layouts do not require power or
+ *       identifier fields and create Beacon objects without identifiers.
  * </pre>
  *
  * <p>Each prefix is followed by a colon, then an inclusive decimal byte offset for the field from
@@ -123,123 +129,132 @@ static const NSString *X_PATTERN = @"x";
  *
  */
 -(BOOL) setBeaconLayout: (NSString *)beaconLayout error:(NSError **)errorPtr; {
-  
-  NSArray *terms =  [beaconLayout componentsSeparatedByString:@","];
-  int errorCode = 0;
-  NSString *errorString;
-  
-  for (NSString *term in terms) {
-    Boolean found = NO;
-
-    NSRange textRange = NSMakeRange(0, term.length);
-    NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern: (NSString *)I_PATTERN options:0 error:nil];
-    NSArray* matches = [regex matchesInString:term options:0 range: textRange];
-    for (NSTextCheckingResult* match in matches) {
-      found = YES;
-      NSString *group1 = [term substringWithRange:[match rangeAtIndex:1]];
-      NSString *group2 = [term substringWithRange:[match rangeAtIndex:2]];
-      NSString *group3 = [term substringWithRange:[match rangeAtIndex:3]];
-      NSNumber *startOffset = [NSNumber numberWithLong:[group1 integerValue]];
-      NSNumber *endOffset = [NSNumber numberWithLong:[group2 integerValue]];
-      NSNumber *littleEndian = [NSNumber numberWithBool: [group3 isEqualToString:@"l"]];
-      [self.identifierLittleEndianFlags addObject: littleEndian];
-      [self.identifierStartOffsets addObject: startOffset];
-      [self.identifierEndOffsets addObject: endOffset];
+    
+    NSArray *terms =  [beaconLayout componentsSeparatedByString:@","];
+    int errorCode = 0;
+    NSString *errorString;
+    
+    for (NSString *term in terms) {
+        Boolean found = NO;
+        
+        NSRange textRange = NSMakeRange(0, term.length);
+        NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern: (NSString *)I_PATTERN options:0 error:nil];
+        NSArray* matches = [regex matchesInString:term options:0 range: textRange];
+        for (NSTextCheckingResult* match in matches) {
+            found = YES;
+            NSString *group1 = [term substringWithRange:[match rangeAtIndex:1]];
+            NSString *group2 = [term substringWithRange:[match rangeAtIndex:2]];
+            NSString *group3 = [term substringWithRange:[match rangeAtIndex:3]];
+            NSNumber *startOffset = [NSNumber numberWithLong:[group1 integerValue]];
+            NSNumber *endOffset = [NSNumber numberWithLong:[group2 integerValue]];
+            NSNumber *littleEndian = [NSNumber numberWithBool: [group3 isEqualToString:@"l"]];
+            NSNumber *variableLength = [NSNumber numberWithBool: [group3 isEqualToString:@"v"]];
+            [self.identifierLittleEndianFlags addObject: littleEndian];
+            [self.identifierStartOffsets addObject: startOffset];
+            [self.identifierEndOffsets addObject: endOffset];
+            [self.identifierVariableLengthFlags addObject: variableLength];
+        }
+        
+        regex = [NSRegularExpression regularExpressionWithPattern: (NSString *)X_PATTERN options:0 error:nil];
+        matches = [regex matchesInString:term options:0 range: textRange];
+        if (matches.count > 0) {
+            found = YES;
+            self.extraFrame = YES;
+        }
+        
+        regex = [NSRegularExpression regularExpressionWithPattern: (NSString *)S_PATTERN options:0 error:nil];
+        matches = [regex matchesInString:term options:0 range: textRange];
+        for (NSTextCheckingResult* match in matches) {
+            found = YES;
+            NSString *group1 = [term substringWithRange:[match rangeAtIndex:1]];
+            NSString *group2 = [term substringWithRange:[match rangeAtIndex:2]];
+            NSString *group3 = [term substringWithRange:[match rangeAtIndex:3]];
+            self.serviceUuidStartOffset = [NSNumber numberWithLong:[group1 integerValue]];
+            self.serviceUuidEndOffset = [NSNumber numberWithLong:[group2 integerValue]];
+            self.serviceUuid = [NSNumber numberWithLong:[group3 integerValue]];
+        }
+        
+        regex = [NSRegularExpression regularExpressionWithPattern: (NSString *)D_PATTERN options:0 error:nil];
+        matches = [regex matchesInString:term options:0 range: textRange];
+        for (NSTextCheckingResult* match in matches) {
+            found = YES;
+            NSString *group1 = [term substringWithRange:[match rangeAtIndex:1]];
+            NSString *group2 = [term substringWithRange:[match rangeAtIndex:2]];
+            NSString *group3 = [term substringWithRange:[match rangeAtIndex:3]];
+            NSNumber *startOffset = [NSNumber numberWithLong:[group1 integerValue]];
+            NSNumber *endOffset = [NSNumber numberWithLong:[group2 integerValue]];
+            NSNumber *littleEndian = [NSNumber numberWithBool: [group3 isEqualToString:@"l"]];
+            [self.dataLittleEndianFlags addObject: littleEndian];
+            [self.dataStartOffsets addObject: startOffset];
+            [self.dataEndOffsets addObject: endOffset];
+        }
+        
+        regex = [NSRegularExpression regularExpressionWithPattern: (NSString *)P_PATTERN options:0 error:nil];
+        matches = [regex matchesInString:term options:0 range: textRange];
+        for (NSTextCheckingResult* match in matches) {
+            found = YES;
+            NSString *group1 = [term substringWithRange:[match rangeAtIndex:1]];
+            NSString *group2 = [term substringWithRange:[match rangeAtIndex:2]];
+            NSRange correctionRange =[match rangeAtIndex:3];
+            if (correctionRange.location != NSNotFound) {
+                NSString *group3 = [term substringWithRange:correctionRange];
+                self.powerCorrection = [NSNumber numberWithLong:[group3 integerValue]];
+            }
+            else {
+                self.powerCorrection = @0;
+            }
+            self.powerStartOffset = [NSNumber numberWithLong:[group1 integerValue]];
+            self.powerEndOffset = [NSNumber numberWithLong:[group2 integerValue]];
+        }
+        
+        regex = [NSRegularExpression regularExpressionWithPattern: (NSString *)M_PATTERN options:0 error:nil];
+        matches = [regex matchesInString:term options:0 range: textRange];
+        for (NSTextCheckingResult* match in matches) {
+            found = YES;
+            NSString *group1 = [term substringWithRange:[match rangeAtIndex:1]];
+            NSString *group2 = [term substringWithRange:[match rangeAtIndex:2]];
+            NSString *group3 = [term substringWithRange:[match rangeAtIndex:3]];
+            self.matchingBeaconTypeCodeStartOffset = [NSNumber numberWithLong:[group1 integerValue]];
+            self.matchingBeaconTypeCodeEndOffset = [NSNumber numberWithLong:[group2 integerValue]];
+            unsigned code = 0;
+            NSScanner *scanner = [NSScanner scannerWithString:group3];
+            [scanner scanHexInt:&code];
+            self.matchingBeaconTypeCode = [NSNumber numberWithUnsignedInt:code];
+        }
+        if (!found) {
+            NSLog(@"cannot parse term %@", term);
+            errorCode = -1;
+            errorString = NSLocalizedString(@"Cannot parse beacon layout term %@", term);
+        }
     }
-
-    regex = [NSRegularExpression regularExpressionWithPattern: (NSString *)S_PATTERN options:0 error:nil];
-    matches = [regex matchesInString:term options:0 range: textRange];
-    for (NSTextCheckingResult* match in matches) {
-      found = YES;
-      NSString *group1 = [term substringWithRange:[match rangeAtIndex:1]];
-      NSString *group2 = [term substringWithRange:[match rangeAtIndex:2]];
-      NSString *group3 = [term substringWithRange:[match rangeAtIndex:3]];
-      self.serviceUuidStartOffset = [NSNumber numberWithLong:[group1 integerValue]];
-      self.serviceUuidEndOffset = [NSNumber numberWithLong:[group2 integerValue]];
-      self.serviceUuid = [NSNumber numberWithLong:[group3 integerValue]];
+    if ((self.powerStartOffset == Nil || self.powerEndOffset == Nil) && self.extraFrame == NO) {
+        errorCode = -2;
+        errorString = NSLocalizedString(@"You must supply a power byte offset with a prefix of 'p'", @"");
+    }
+    if (self.serviceUuid == Nil && (self.matchingBeaconTypeCodeStartOffset == Nil || self.matchingBeaconTypeCodeEndOffset == Nil)) {
+        errorCode = -3;
+        errorString = NSLocalizedString(@"You must supply a matching beacon type expression with a prefix of 'm', or a service uuid expression with a prefix of 's'", @"");
+    }
+    if ((self.identifierStartOffsets.count == 0 || self.identifierEndOffsets.count == 0) && self.extraFrame == NO) {
+        errorCode = -4;
+        errorString = NSLocalizedString(@"You must supply at least one identifier offset withh a prefix of 'i'", @"");
+    }
+    if (errorPtr && errorCode < 0) {
+        NSString *domain = @"org.altbeacon.beaconparser.ErrorDomain";
+        NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorString };
+        
+        *errorPtr = [NSError errorWithDomain:domain
+                                        code:errorCode
+                                    userInfo:userInfo];
+        return NO;
     }
     
-    regex = [NSRegularExpression regularExpressionWithPattern: (NSString *)D_PATTERN options:0 error:nil];
-    matches = [regex matchesInString:term options:0 range: textRange];
-    for (NSTextCheckingResult* match in matches) {
-      found = YES;
-      NSString *group1 = [term substringWithRange:[match rangeAtIndex:1]];
-      NSString *group2 = [term substringWithRange:[match rangeAtIndex:2]];
-      NSString *group3 = [term substringWithRange:[match rangeAtIndex:3]];
-      NSNumber *startOffset = [NSNumber numberWithLong:[group1 integerValue]];
-      NSNumber *endOffset = [NSNumber numberWithLong:[group2 integerValue]];
-      NSNumber *littleEndian = [NSNumber numberWithBool: [group3 isEqualToString:@"l"]];
-      [self.dataLittleEndianFlags addObject: littleEndian];
-      [self.dataStartOffsets addObject: startOffset];
-      [self.dataEndOffsets addObject: endOffset];
-    }
-
-    regex = [NSRegularExpression regularExpressionWithPattern: (NSString *)P_PATTERN options:0 error:nil];
-    matches = [regex matchesInString:term options:0 range: textRange];
-    for (NSTextCheckingResult* match in matches) {
-      found = YES;
-      NSString *group1 = [term substringWithRange:[match rangeAtIndex:1]];
-      NSString *group2 = [term substringWithRange:[match rangeAtIndex:2]];
-      NSRange correctionRange =[match rangeAtIndex:3];
-      if (correctionRange.location != NSNotFound) {
-        NSString *group3 = [term substringWithRange:correctionRange];
-        self.powerCorrection = [NSNumber numberWithLong:[group3 integerValue]];
-      }
-      else {
-        self.powerCorrection = @0;
-      }
-      self.powerStartOffset = [NSNumber numberWithLong:[group1 integerValue]];
-      self.powerEndOffset = [NSNumber numberWithLong:[group2 integerValue]];
-    }
-
-    regex = [NSRegularExpression regularExpressionWithPattern: (NSString *)M_PATTERN options:0 error:nil];
-    matches = [regex matchesInString:term options:0 range: textRange];
-    for (NSTextCheckingResult* match in matches) {
-      found = YES;
-      NSString *group1 = [term substringWithRange:[match rangeAtIndex:1]];
-      NSString *group2 = [term substringWithRange:[match rangeAtIndex:2]];
-      NSString *group3 = [term substringWithRange:[match rangeAtIndex:3]];
-      self.matchingBeaconTypeCodeStartOffset = [NSNumber numberWithLong:[group1 integerValue]];
-      self.matchingBeaconTypeCodeEndOffset = [NSNumber numberWithLong:[group2 integerValue]];
-      unsigned code = 0;
-      NSScanner *scanner = [NSScanner scannerWithString:group3];
-      [scanner scanHexInt:&code];
-      self.matchingBeaconTypeCode = [NSNumber numberWithUnsignedInt:code];
-    }
-    if (!found) {
-      NSLog(@"cannot parse term %@", term);
-      errorCode = -1;
-      errorString = NSLocalizedString(@"Cannot parse beacon layout term %@", term);
-    }
-  }
-  if (self.powerStartOffset == Nil || self.powerEndOffset == Nil) {
-    errorCode = -2;
-    errorString = NSLocalizedString(@"You must supply a power byte offset with a prefix of 'p'", @"");
-  }
-  if (self.serviceUuid == Nil && (self.matchingBeaconTypeCodeStartOffset == Nil || self.matchingBeaconTypeCodeEndOffset == Nil)) {
-    errorCode = -3;
-    errorString = NSLocalizedString(@"You must supply a matching beacon type expression with a prefix of 'm', or a service uuid expression with a prefix of 's'", @"");
-  }
-  if (self.identifierStartOffsets.count == 0 || self.identifierEndOffsets.count == 0) {
-    errorCode = -4;
-    errorString = NSLocalizedString(@"You must supply at least one identifier offset withh a prefix of 'i'", @"");
-  }
-  if (errorPtr && errorCode < 0) {
-    NSString *domain = @"org.altbeacon.beaconparser.ErrorDomain";
-    NSDictionary *userInfo = @{ NSLocalizedDescriptionKey : errorString };
-    
-    *errorPtr = [NSError errorWithDomain:domain
-                                    code:errorCode
-                                userInfo:userInfo];
-    return NO;
-  }
-
-  return YES;
+    return YES;
 }
 
 
 /**
- * Construct a Beacon from a Bluetooth LE packet collected by Android's Bluetooth APIs,
+ * Construct a Beacon from a Bluetooth LE packet collected by CoreBluetooth,
  * including the raw bluetooth device info
  *
  * param scanData The actual packet bytes
@@ -248,197 +263,218 @@ static const NSString *X_PATTERN = @"x";
  * returns An instance of a <code>Beacon</code>
  */
 -(RNLBeacon *) fromScanData: (NSData *)scanData withRssi: (NSNumber *) rssi forDevice: (CBPeripheral *)device serviceUuid:(NSNumber *) serviceUuid {
-  return [self fromScanData: scanData withRssi: rssi forDevice: device serviceUuid: serviceUuid withBeacon:[[RNLBeacon alloc] init]];
+    return [self fromScanData: scanData withRssi: rssi forDevice: device serviceUuid: serviceUuid withBeacon:[[RNLBeacon alloc] init]];
 }
 
 -(RNLBeacon *) fromScanData: (NSData *)scanData withRssi: (NSNumber *) rssi forDevice: (CBPeripheral *)device serviceUuid: (NSNumber *) serviceUuid withBeacon: (RNLBeacon *)beacon {
-  
-  BOOL patternFound = NO;
-  const unsigned char *bytes = [scanData bytes];
-  
-  int beaconTypeCodeLength = [self.matchingBeaconTypeCodeEndOffset intValue]-[self.matchingBeaconTypeCodeStartOffset intValue]+1;
-  long matchingBeaconTypeCodeLong = [self.matchingBeaconTypeCode longValue];
-  unsigned char beaconTypeCodeBytes[4] = { 0, 0, 0, 0 };
-  if (beaconTypeCodeLength > 4) {
-    NSLog(@"beacon type code is specified to be too long");
-    return Nil;
-  }
-  [self value: matchingBeaconTypeCodeLong toByteArray: beaconTypeCodeBytes withLength: beaconTypeCodeLength];
-  
-  int startByte = 0;
-  if (serviceUuid != Nil) {
-    startByte = -2; // serviceUuids are stripped out of the data on iOS, so we have to adjust offsets
-  }
-  if ([self biggestOffset] +1 > scanData.length - startByte) {
-    //NSLog(@"Advertisement of length %ld is too short to match layout that ends on offset %d", scanData.length+startByte, [self biggestOffset]);
-    return Nil;
-  }
-  
-  if (scanData.length < startByte+beaconTypeCodeLength+[self.matchingBeaconTypeCodeStartOffset intValue]) {
-    // advertisement is too small
-  }
-  else {
-    if ([self byteArray: bytes+startByte+[self.matchingBeaconTypeCodeStartOffset intValue] matchesByteArray: beaconTypeCodeBytes withLength: beaconTypeCodeLength]) {
-      patternFound = YES;
-      //NSLog(@"matching type code found");
+    
+    BOOL patternFound = NO;
+    const unsigned char *bytes = [scanData bytes];
+    
+    int beaconTypeCodeLength = [self.matchingBeaconTypeCodeEndOffset intValue]-[self.matchingBeaconTypeCodeStartOffset intValue]+1;
+    long matchingBeaconTypeCodeLong = [self.matchingBeaconTypeCode longValue];
+    unsigned char beaconTypeCodeBytes[4] = { 0, 0, 0, 0 };
+    if (beaconTypeCodeLength > 4) {
+        NSLog(@"beacon type code is specified to be too long");
+        return Nil;
+    }
+    [self value: matchingBeaconTypeCodeLong toByteArray: beaconTypeCodeBytes withLength: beaconTypeCodeLength];
+    
+    int startByte = 0;
+    if (serviceUuid != Nil) {
+        startByte = -2; // serviceUuids are stripped out of the data on iOS, so we have to adjust offsets
+    }
+    if ([self biggestOffset] +1 > scanData.length - startByte) {
+        BOOL variableLength = NO;
+        for (NSNumber *variableLengthFlag in self.identifierVariableLengthFlags) {
+            if ([variableLengthFlag  isEqual: @1]) {
+                variableLength = YES;
+            }
+        }
+        if (!variableLength) {
+            return Nil;
+        }
+    }
+    
+    if (scanData.length < startByte+beaconTypeCodeLength+[self.matchingBeaconTypeCodeStartOffset intValue]) {
+        // advertisement is too small
     }
     else {
-      //NSLog(@"matching type code not found");
+        if ([self byteArray: bytes+startByte+[self.matchingBeaconTypeCodeStartOffset intValue] matchesByteArray: beaconTypeCodeBytes withLength: beaconTypeCodeLength]) {
+            patternFound = YES;
+        }
     }
-  }
-  
-  if (patternFound == NO) {
-    // This is not a beacon
-    return Nil;
-  }
-  
-  beacon.name = device.name;
-  beacon.rssi = rssi;
-  beacon.beaconTypeCode = self.matchingBeaconTypeCode;
-  beacon.measuredPower = [NSNumber numberWithInt: 0];
-
-  NSMutableArray *identifiers = [[NSMutableArray alloc] init];
-  
-  for (int i = 0; i < self.identifierEndOffsets.count; i++) {
-    int startOffset = [[self.identifierStartOffsets objectAtIndex: i] intValue];
-    int endOffset = [[self.identifierEndOffsets objectAtIndex: i] intValue];
-    int length = endOffset - startOffset +1;
-    BOOL littleEndian = [[self.identifierLittleEndianFlags objectAtIndex: i] boolValue];
-    NSString *idString = [self formattedStringIdentiferFromByteArray: bytes+startOffset+startByte ofLength: length asLittleEndian:littleEndian];
-    [identifiers addObject:idString];
-  }
-  beacon.identifiers = identifiers;
-  
-  int measuredPower = 0;
-  int startOffset = [self.powerStartOffset intValue];
-  int endOffset = [self.powerEndOffset intValue];
-  int length = endOffset-startOffset +1;
-  NSString *powerString = [self formattedStringIdentiferFromByteArray:bytes+startOffset+startByte ofLength:length asLittleEndian:NO];
-  measuredPower = (int) [powerString integerValue];
-  // make sure it is a signed integer
-  if (measuredPower > 127) {
-    measuredPower -= 256;
-  }
-  measuredPower += [self.powerCorrection integerValue];
-  beacon.measuredPower = [NSNumber numberWithInt: measuredPower];
-  
-  
-  NSMutableArray *dataFields = [[NSMutableArray alloc] init];
-  for (int i = 0; i < self.dataEndOffsets.count; i++) {
-    int startOffset = [[self.dataStartOffsets objectAtIndex: i] intValue];
-    int endOffset = [[self.dataEndOffsets objectAtIndex: i] intValue];
-    int length = endOffset - startOffset +1;
-    BOOL littleEndian = [[self.dataLittleEndianFlags objectAtIndex: i] boolValue];
-    NSString *idString = [self formattedStringIdentiferFromByteArray: bytes+startOffset+startByte ofLength: length asLittleEndian:littleEndian];
-    [dataFields addObject:idString];
-  }
-  
-  beacon.dataFields = dataFields;
-  
-  
-  // We will not expose the bluetooth mac address because it gets spoofed on iOS and is of no value
-  NSString *manufacturerString = [self formattedStringIdentiferFromByteArray:bytes ofLength:2 asLittleEndian:NO];
-  beacon.manufacturer = [NSNumber numberWithLong: [manufacturerString integerValue]];
-
-  return beacon;
+    
+    if (patternFound == NO) {
+        // This is not a beacon
+        return Nil;
+    }
+    
+    beacon.extraFrame = self.extraFrame;
+    beacon.name = device.name;
+    beacon.rssi = rssi;
+    beacon.beaconTypeCode = self.matchingBeaconTypeCode;
+    beacon.measuredPower = [NSNumber numberWithInt: 0];
+    
+    NSMutableArray *identifiers = [[NSMutableArray alloc] init];
+    
+    for (int i = 0; i < self.identifierEndOffsets.count; i++) {
+        int startOffset = [[self.identifierStartOffsets objectAtIndex: i] intValue];
+        int endOffset = [[self.identifierEndOffsets objectAtIndex: i] intValue];
+        BOOL littleEndian = [[self.identifierLittleEndianFlags objectAtIndex: i] boolValue];
+        BOOL variableLength = [[self.identifierVariableLengthFlags objectAtIndex: i] boolValue];
+        if (variableLength) {
+            if (endOffset+startByte >= scanData.length) {
+                endOffset = (int) scanData.length-1-startByte;
+            }
+        }
+        int length = endOffset - startOffset +1;
+        NSString *idString = [self formattedStringIdentiferFromByteArray: bytes+startOffset+startByte ofLength: length asLittleEndian:littleEndian];
+        [identifiers addObject:idString];
+    }
+    beacon.identifiers = identifiers;
+    
+    int measuredPower = 0;
+    if (self.powerStartOffset != nil) { // Don't parse measured power if it is not in format
+        int startOffset = [self.powerStartOffset intValue];
+        int endOffset = [self.powerEndOffset intValue];
+        int length = endOffset-startOffset +1;
+        NSString *powerString = [self formattedStringIdentiferFromByteArray:bytes+startOffset+startByte ofLength:length asLittleEndian:NO];
+        measuredPower = (int) [powerString integerValue];
+        // make sure it is a signed integer
+        if (measuredPower > 127) {
+            measuredPower -= 256;
+        }
+        measuredPower += [self.powerCorrection integerValue];
+        beacon.measuredPower = [NSNumber numberWithInt: measuredPower];
+    }
+    
+    
+    NSMutableArray *dataFields = [[NSMutableArray alloc] init];
+    for (int i = 0; i < self.dataEndOffsets.count; i++) {
+        int startOffset = [[self.dataStartOffsets objectAtIndex: i] intValue];
+        int endOffset = [[self.dataEndOffsets objectAtIndex: i] intValue];
+        int length = endOffset - startOffset +1;
+        BOOL littleEndian = [[self.dataLittleEndianFlags objectAtIndex: i] boolValue];
+        NSString *idString = [self formattedStringIdentiferFromByteArray: bytes+startOffset+startByte ofLength: length asLittleEndian:littleEndian];
+        [dataFields addObject:idString];
+    }
+    
+    beacon.dataFields = dataFields;
+    beacon.serviceUuid = serviceUuid;
+    
+    // We will not expose the bluetooth mac address because it gets spoofed on iOS and is of no value
+    // but we will track the uuid as a bluetooth identifier proxy
+    beacon.bluetoothIdentifier = [device.identifier UUIDString];
+    
+    if (beacon.serviceUuid.intValue != -1) {
+        NSString *manufacturerString = [self formattedStringIdentiferFromByteArray:bytes ofLength:2 asLittleEndian:NO];
+        beacon.manufacturer = [NSNumber numberWithLong: [manufacturerString integerValue]];
+    }
+    else {
+        beacon.manufacturer = @-1;
+    }
+    
+    return beacon;
 }
 
 - (void) value: (long) value toByteArray: (unsigned char *)bytes withLength: (int) length {
-  for (int i = 0; i < length; i++) {
-    bytes[length-i-1] = (value >> i*8) & 0xFF;
-  }
+    for (int i = 0; i < length; i++) {
+        bytes[length-i-1] = (value >> i*8) & 0xFF;
+    }
 }
 
 -(NSString *) hexStringFromData: (NSData *) data {
-  return [self hexStringFromBytes: [data bytes] ofLength: data.length withSpaces: YES];
+    return [self hexStringFromBytes: [data bytes] ofLength: data.length withSpaces: YES];
 }
 
 -(NSString *) hexStringFromBytes: (const unsigned char *) bytes ofLength: (unsigned long) length withSpaces: (BOOL) addSpaces {
-  NSString *str = @"";
-  for (int i = 0; i < length; i++) {
-    if (addSpaces) {
-      str = [NSString stringWithFormat:@"%@ %02X", str, bytes[i]];
+    NSString *str = @"";
+    for (int i = 0; i < length; i++) {
+        if (addSpaces) {
+            str = [NSString stringWithFormat:@"%@ %02X", str, bytes[i]];
+        }
+        else {
+            str = [NSString stringWithFormat:@"%@%02X", str, bytes[i]];
+        }
     }
-    else {
-      str = [NSString stringWithFormat:@"%@%02X", str, bytes[i]];
-    }
-  }
-  return str;
+    return str;
 }
 
 -(BOOL) byteArray: (const unsigned char *)bytes1 matchesByteArray: (const unsigned char *) bytes2 withLength: (int) length {
-  for (int i = 0; i < length; i++) {
-    if (bytes1[i] != bytes2[i]) {
-      return NO;
+    for (int i = 0; i < length; i++) {
+        if (bytes1[i] != bytes2[i]) {
+            return NO;
+        }
     }
-  }
-  return YES;
+    return YES;
 }
 
 -(NSString *) formattedStringIdentiferFromByteArray: (const unsigned char *) byteArray ofLength: (int) length asLittleEndian: (BOOL) littleEndian {
-  unsigned char* bytes = malloc(length * sizeof(unsigned char));
-  NSString *formattedIdentifier = Nil;
+    unsigned char* bytes = malloc(length * sizeof(unsigned char));
+    NSString *formattedIdentifier = Nil;
     
-  if (littleEndian) {
-    for (int i = 0; i < length; i++) {
-      bytes[i] = byteArray[length-1-i];
-    }
-  }
-  else {
-    for (int i = 0; i < length; i++) {
-      bytes[i] = byteArray[i];
-    }
-  }
-  
-  // We treat a 1-4 byte number as decimal string
-  if (length < 5) {
-    long number = 0l;
-    for (int i = 0; i < length; i++)  {
-      long byteValue = (long) (bytes[length - i-1] & 0xff);
-      long positionValue = 1 << i*8;
-      long calculatedValue =  (long) (byteValue * positionValue);
-      number += calculatedValue;
-    }
-    formattedIdentifier = [NSString stringWithFormat:@"%ld", number];
-  }
-  
-  if (formattedIdentifier == Nil) {
-    // We treat a 6+ byte number as a hex string
-    NSString *hexString = [self hexStringFromBytes: bytes ofLength: length withSpaces: NO];
-    // And if it is a 16 byte number we add dashes to it to make it look like a standard UUID
-    if (length == 16) {
-      NSMutableString *guid = [NSMutableString stringWithString: hexString];
-      [guid insertString: @"-" atIndex: 8];
-      [guid insertString: @"-" atIndex: 13];
-      [guid insertString: @"-" atIndex: 18];
-      [guid insertString: @"-" atIndex: 23];
-      formattedIdentifier = guid;
+    if (littleEndian) {
+        for (int i = 0; i < length; i++) {
+            bytes[i] = byteArray[length-1-i];
+        }
     }
     else {
-      formattedIdentifier = [NSString stringWithFormat:@"0x%@", hexString];
+        for (int i = 0; i < length; i++) {
+            bytes[i] = byteArray[i];
+        }
     }
-  }
-  
-  free(bytes);
-  return formattedIdentifier;
+    
+    // We treat a 1-4 byte number as decimal string
+    if (length < 5) {
+        long number = 0l;
+        for (int i = 0; i < length; i++)  {
+            long byteValue = (long) (bytes[length - i-1] & 0xff);
+            long positionValue = 1 << i*8;
+            long calculatedValue =  (long) (byteValue * positionValue);
+            number += calculatedValue;
+        }
+        formattedIdentifier = [NSString stringWithFormat:@"%ld", number];
+    }
+    
+    if (formattedIdentifier == Nil) {
+        // We treat a 6+ byte number as a hex string
+        NSString *hexString = [self hexStringFromBytes: bytes ofLength: length withSpaces: NO];
+        // And if it is a 16 byte number we add dashes to it to make it look like a standard UUID
+        if (length == 16) {
+            NSMutableString *guid = [NSMutableString stringWithString: hexString];
+            [guid insertString: @"-" atIndex: 8];
+            [guid insertString: @"-" atIndex: 13];
+            [guid insertString: @"-" atIndex: 18];
+            [guid insertString: @"-" atIndex: 23];
+            formattedIdentifier = guid;
+        }
+        else {
+            formattedIdentifier = [NSString stringWithFormat:@"0x%@", hexString];
+        }
+    }
+    
+    free(bytes);
+    return formattedIdentifier;
 }
 
 -(int) biggestOffset {
-  int biggestOffset = [self.matchingBeaconTypeCodeEndOffset intValue];
-  if ([self.powerEndOffset intValue] > biggestOffset) {
-    biggestOffset = [self.powerEndOffset intValue];
-  }
-  for (NSNumber *identifierEndOffset in self.identifierEndOffsets) {
-    if ([identifierEndOffset intValue] > biggestOffset) {
-      biggestOffset = [identifierEndOffset intValue];
+    int biggestOffset = [self.matchingBeaconTypeCodeEndOffset intValue];
+    if ([self.powerEndOffset intValue] > biggestOffset) {
+        biggestOffset = [self.powerEndOffset intValue];
     }
-  }
-  for (NSNumber *dataEndOffset in self.dataEndOffsets) {
-    if ([dataEndOffset intValue] > biggestOffset) {
-      biggestOffset = [dataEndOffset intValue];
+    for (NSNumber *identifierEndOffset in self.identifierEndOffsets) {
+        if ([identifierEndOffset intValue] > biggestOffset) {
+            biggestOffset = [identifierEndOffset intValue];
+        }
     }
-  }
-  return biggestOffset;
+    for (NSNumber *dataEndOffset in self.dataEndOffsets) {
+        if ([dataEndOffset intValue] > biggestOffset) {
+            biggestOffset = [dataEndOffset intValue];
+        }
+    }
+    return biggestOffset;
 }
 
 @end
+

@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EEAF8D92210153D3003E6402 /* sample.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAF8D91210153D3003E6402 /* sample.swift */; };
+		EEAF8D95210158AD003E6402 /* RNLURLBeaconCompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = EEAF8D94210158AD003E6402 /* RNLURLBeaconCompressor.m */; };
+		EEAF8D96210158AD003E6402 /* RNLURLBeaconCompressor.m in Sources */ = {isa = PBXBuildFile; fileRef = EEAF8D94210158AD003E6402 /* RNLURLBeaconCompressor.m */; };
 		EEDCDB771B9F92FA00AE693C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDB761B9F92FA00AE693C /* main.m */; };
 		EEDCDB7A1B9F92FA00AE693C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EEDCDB791B9F92FA00AE693C /* AppDelegate.m */; };
 		EEDCDB801B9F92FA00AE693C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEDCDB7E1B9F92FA00AE693C /* Main.storyboard */; };
@@ -48,6 +51,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EEAF8D90210153D3003E6402 /* ios-beacon-tools-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ios-beacon-tools-Bridging-Header.h"; sourceTree = "<group>"; };
+		EEAF8D91210153D3003E6402 /* sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sample.swift; sourceTree = "<group>"; };
+		EEAF8D93210158AD003E6402 /* RNLURLBeaconCompressor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNLURLBeaconCompressor.h; sourceTree = "<group>"; };
+		EEAF8D94210158AD003E6402 /* RNLURLBeaconCompressor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNLURLBeaconCompressor.m; sourceTree = "<group>"; };
 		EEDCDB711B9F92FA00AE693C /* ios-beacon-tools.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ios-beacon-tools.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEDCDB751B9F92FA00AE693C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EEDCDB761B9F92FA00AE693C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -102,10 +109,12 @@
 		EEDCDB681B9F92FA00AE693C = {
 			isa = PBXGroup;
 			children = (
+				EEAF8D91210153D3003E6402 /* sample.swift */,
 				EEDCDBC51B9F93BD00AE693C /* LICENSE */,
 				EEDCDB731B9F92FA00AE693C /* ios-beacon-tools */,
 				EEDCDB8D1B9F92FA00AE693C /* ios-beacon-toolsTests */,
 				EEDCDB721B9F92FA00AE693C /* Products */,
+				EEAF8D90210153D3003E6402 /* ios-beacon-tools-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -121,6 +130,8 @@
 		EEDCDB731B9F92FA00AE693C /* ios-beacon-tools */ = {
 			isa = PBXGroup;
 			children = (
+				EEAF8D93210158AD003E6402 /* RNLURLBeaconCompressor.h */,
+				EEAF8D94210158AD003E6402 /* RNLURLBeaconCompressor.m */,
 				EEDCDB9A1B9F935500AE693C /* RNLAppDelegate.h */,
 				EEDCDB9B1B9F935500AE693C /* RNLAppDelegate.m */,
 				EEDCDB9E1B9F935500AE693C /* RNLBeaconTracker.h */,
@@ -225,6 +236,7 @@
 				TargetAttributes = {
 					EEDCDB701B9F92FA00AE693C = {
 						CreatedOnToolsVersion = 6.4;
+						LastSwiftMigration = 0940;
 					};
 					EEDCDB891B9F92FA00AE693C = {
 						CreatedOnToolsVersion = 6.4;
@@ -281,6 +293,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EEDCDBC31B9F935500AE693C /* RNLBeaconTableViewController.m in Sources */,
+				EEAF8D92210153D3003E6402 /* sample.swift in Sources */,
 				EEDCDBB71B9F935500AE693C /* RNLSignalMeasurement.m in Sources */,
 				EEDCDBBF1B9F935500AE693C /* RNLBeaconParser.m in Sources */,
 				EEDCDBBD1B9F935500AE693C /* RNLBeaconScanner.m in Sources */,
@@ -290,6 +303,7 @@
 				EEDCDB771B9F92FA00AE693C /* main.m in Sources */,
 				EEDCDBAF1B9F935500AE693C /* RNLAppDelegate.m in Sources */,
 				EEDCDBBB1B9F935500AE693C /* RNLBeacon+Distance.m in Sources */,
+				EEAF8D95210158AD003E6402 /* RNLURLBeaconCompressor.m in Sources */,
 				EEDCDBB31B9F935500AE693C /* RNLBeaconTracker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -303,6 +317,7 @@
 				EEDCDB911B9F92FA00AE693C /* ios_beacon_toolsTests.m in Sources */,
 				EEDCDBB41B9F935500AE693C /* RNLBeaconTracker.m in Sources */,
 				EEDCDBC41B9F935500AE693C /* RNLBeaconTableViewController.m in Sources */,
+				EEAF8D96210158AD003E6402 /* RNLURLBeaconCompressor.m in Sources */,
 				EEDCDBBE1B9F935500AE693C /* RNLBeaconScanner.m in Sources */,
 				EEDCDBB81B9F935500AE693C /* RNLSignalMeasurement.m in Sources */,
 				EEDCDBB01B9F935500AE693C /* RNLAppDelegate.m in Sources */,
@@ -427,10 +442,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = "ios-beacon-tools/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ios-beacon-tools-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -438,16 +457,20 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = "ios-beacon-tools/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ios-beacon-tools-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
 		EEDCDB981B9F92FA00AE693C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -467,6 +490,7 @@
 		EEDCDB991B9F92FA00AE693C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -498,6 +522,7 @@
 				EEDCDB961B9F92FA00AE693C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		EEDCDB971B9F92FA00AE693C /* Build configuration list for PBXNativeTarget "ios-beacon-toolsTests" */ = {
 			isa = XCConfigurationList;
@@ -506,6 +531,7 @@
 				EEDCDB991B9F92FA00AE693C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
