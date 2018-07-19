@@ -30,8 +30,11 @@ class Sample {
                     NSLog("Detected EDDYSTONE-URL with %@", RNLURLBeaconCompressor.urlString(fromEddystoneURLIdentifier: beacon.id1))
                 }
                 else {
+                    NSLog("Some other beacon detectd")
                     // some other beacon type
                 }
+                NSLog("The beacon is about %.1f meters away", beacon.distance)
+                
             }
         }        
     }

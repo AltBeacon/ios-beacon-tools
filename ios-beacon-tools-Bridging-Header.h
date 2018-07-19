@@ -4,3 +4,4 @@
 
 #include "RNLBeaconScanner.h"
 #include "RNLURLBeaconCompressor.h"
+#include "RNLBeacon+Distance.h"
