@@ -14,6 +14,17 @@ beacons can be access from an array on the `scanner.trackedBeacons()` method.
 This list of detected beacons is updated internally as beacons come in, and the code provides no callbacks.  You'll
 need to some way to run code periodically to read the list of detected beacons.
 
+## Setup
+
+1. Copy all the files in the beacon-tools folder into your project
+2. If using Swift, add at least the following to your PROJECTNAME-Bridging-Header.h file.
+
+````
+#include "RNLBeaconScanner.h"
+#include "RNLURLBeaconCompressor.h"
+#include "RNLBeacon+Distance.h"
+````
+
 ## Example
 
 ```
