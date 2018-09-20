@@ -12,7 +12,7 @@ class Sample {
     var scanner: RNLBeaconScanner?
     func sample() {
         scanner = RNLBeaconScanner.shared()
-        scanner?.startScanning()
+        scanner?.startScanningAltbeacons()
         
         // Execute this code periodically (every second or so) to view the beacons detected
         if let detectedBeacons = scanner?.trackedBeacons() as? [RNLBeacon] {
