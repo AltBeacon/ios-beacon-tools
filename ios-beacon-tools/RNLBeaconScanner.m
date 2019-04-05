@@ -74,14 +74,14 @@
     [self stopScanning];
 }
 
-- (void)startScanningAltbeacons {
+- (void)startScanning {
     if (!self.cbManager) {
         self.cbManager = [[CBCentralManager alloc] initWithDelegate:self queue:dispatch_get_main_queue()];
         self.scanning = YES;
     }
 }
 
-- (void)stopScanningAltbeacons {
+- (void)stopScanning {
     [self.cbManager stopScan];
 }
 
