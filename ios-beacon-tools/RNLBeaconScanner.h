@@ -31,8 +31,8 @@
 
 + (instancetype) sharedBeaconScanner;
 
-- (void) startScanningAltbeacons;
-- (void) stopScanningAltbeacons;
+- (void) startScanning;
+- (void) stopScanning;
 - (NSNumber *) calibratedRSSIFor: (RNLBeacon *)beacon;
 - (NSArray *) trackedBeacons;
 

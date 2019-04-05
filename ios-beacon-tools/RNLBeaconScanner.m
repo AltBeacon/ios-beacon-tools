@@ -67,11 +67,11 @@
     
     self.beaconTracker = [[RNLBeaconTracker alloc] init];
     
-    [self startScanningAltbeacons];
+    [self startScanning];
     return self;
 }
 - (void) dealloc {
-    [self stopScanningAltbeacons];
+    [self stopScanning];
 }
 
 - (void)startScanning {
